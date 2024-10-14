@@ -64,7 +64,7 @@ function NewAllocationScreen({ accounts }: { accounts: Account[] }) {
               {account.name}: {account.cap}%
             </Text>
             <Text style={styles.amount}>
-              ${((Number.parseFloat(income) * account.cap) / 100).toFixed(2)}
+              {((Number.parseFloat(income) * account.cap) / 100)}VNĐ
             </Text>
           </View>
         ))}

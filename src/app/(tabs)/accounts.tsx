@@ -29,7 +29,7 @@ export default function AccountsScreen() {
     setTap('');
 
     // //Gọi hàm mySync sau khi nhấn nút add account và reset là các giá trị
-    // await mySync();
+    await mySync();
   };
 
   return (

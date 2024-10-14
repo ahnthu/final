@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect } from 'react';
+import Feather from '@expo/vector-icons/Feather';
 import {
   Alert,
   StyleSheet,
@@ -10,9 +11,13 @@ import {
 import { supabase } from '../../lib/supabase';
 import { useRouter,useNavigation } from 'expo-router';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+// import BackgroundScreen from '../../../BackgroundScreen'
+
 export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isPasswordVisible, setPasswordVisible] = useState(false); // Quản lý hiển thị mật khẩu
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   
