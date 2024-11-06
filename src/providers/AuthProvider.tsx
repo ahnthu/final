@@ -7,8 +7,8 @@ import {
 } from 'react';
 import { supabase } from '../lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
-import database, { accountAllocationCollection, accountsCollection, allocationsCollection } from '../db';
 import { mySync } from '../db/sync';
+import database, { accountsCollection, allocationsCollection, accountAllocationCollection } from '../db';
 
 type AuthContextType = {
   session: Session | null;
@@ -28,11 +28,19 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange( async (_event, session) => {
       setSession(session);
+
+
+      //////đăng nhập thì đồng bộ
       if (session) {
-        await mySync();
+        // Nếu có session (người dùng đã đăng nhập), đồng bộ hóa dữ liệu
+        await mySync(); // Gọi hàm mySync khi người dùng đăng nhập
       }
+      /////đăng nhập thì đồng bộ 
+
+
+
     });
   
     return () => {
@@ -44,25 +52,38 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     await supabase.auth.signOut();
     setSession(null); // Cập nhật lại session sau khi đăng xuất
 
-    await database.write(async () => {
-      // Xóa dữ liệu trong bảng accounts
-      const accounts = await accountsCollection.query().fetch();
-      for (const account of accounts) {
-        await account.destroyPermanently(); // Sử dụng destroyPermanently thay vì delete
-      }
-  
-      // Xóa dữ liệu trong bảng allocations
-      const allocations = await allocationsCollection.query().fetch();
-      for (const allocation of allocations) {
-        await allocation.destroyPermanently(); // Sử dụng destroyPermanently thay vì delete
-      }
-  
-      // Xóa dữ liệu trong bảng account_allocations
-      const accountAllocations = await accountAllocationCollection.query().fetch();
-      for (const accountAllocation of accountAllocations) {
-        await accountAllocation.destroyPermanently(); // Sử dụng destroyPermanently thay vì delete
-      }
-    });
+
+
+///hàm xóa dữ liệu trong watermelon
+
+
+// Xóa dữ liệu trong WatermelonDB
+  // Xóa dữ liệu trong WatermelonDB
+  await database.write(async () => {
+    // Xóa dữ liệu trong bảng accounts
+    const accounts = await accountsCollection.query().fetch();
+    for (const account of accounts) {
+      await account.destroyPermanently(); // Sử dụng destroyPermanently thay vì delete
+    }
+
+    // Xóa dữ liệu trong bảng allocations
+    const allocations = await allocationsCollection.query().fetch();
+    for (const allocation of allocations) {
+      await allocation.destroyPermanently(); // Sử dụng destroyPermanently thay vì delete
+    }
+
+    // Xóa dữ liệu trong bảng account_allocations accountAllocationCollection
+    const accountAllocations = await accountAllocationCollection.query().fetch();
+    for (const accountAllocation of accountAllocations) {
+      await accountAllocation.destroyPermanently(); // Sử dụng destroyPermanently thay vì delete
+    }
+  });
+
+///hàm xóa dữ liệu trong watermelon
+
+
+
+    
   };
 
   return (

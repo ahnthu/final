@@ -9,7 +9,7 @@ function AllocationsList({ allocations }: { allocations: Allocation[] }) {
   return (
     <FlatList
       data={allocations}
-      contentContainerStyle={{ gap: 10, padding: 10 }}
+      contentContainerStyle={{ gap: 10, padding: 10 , shadowOpacity: 0.9,}}
       renderItem={({ item }) => <AllocationListItem allocation={item} />}
     />
   );

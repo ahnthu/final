@@ -8,10 +8,11 @@ import {
   immutableRelation,
   nochange,
 } from '@nozbe/watermelondb/decorators';
+import { Associations } from '@nozbe/watermelondb/Model';
 
 export default class AccountAllocation extends Model {
   static table = 'account_allocations';
-  static associations = {
+  static associations:Associations = {
     allocations: { type: 'belongs_to', key: 'allocation_id' },
     accounts: { type: 'belongs_to', key: 'account_id' },
   };

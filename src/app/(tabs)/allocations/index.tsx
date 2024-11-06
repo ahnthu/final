@@ -1,60 +1,47 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Link, Stack } from 'expo-router';
+import { Link, Stack, useNavigation } from 'expo-router';
 import AllocationsList from '../../../components/AllocationsList';
 import { Feather } from '@expo/vector-icons';
 import { mySync } from '../../../db/sync';
-import { useEffect } from 'react';
-import { useRouter } from 'expo-router';
-import { router } from 'expo-router';
-import * as Crypto from 'expo-crypto';
-import { supabase } from '../../../lib/supabase';
+import { useLayoutEffect } from 'react';
 
 export default function HomeScreen() {
-  const test = async() =>{
-    const res  = await supabase.rpc('create_account', {
-      _id: Crypto.randomUUID(), 
-      _user_id: Crypto.randomUUID(),
-      _name: 'Example Name', 
-      _cap: 1000,
-      _tap: 500,
-      _create_at: new Date().toISOString(),
-      _updated_at: new Date().toISOString(),
+  const navigation = useNavigation();
+
+  // Hide the header for this screen
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerTitle: () => (
+        <View style={styles.customHeader}>
+          <Text style={styles.welcomeText}>
+            Allocations
+
+          </Text>
+        </View>
+      )
     });
-    console.log(res);
-  }
-
-  // // Đồng bộ dữ liệu khi màn hình được load
-  // useEffect(() => {
-  //   const syncData = async () => {
-  //     try {
-  //       await mySync();  // Gọi hàm đồng bộ khi màn hình này load
-  //     } catch (error) {
-  //       console.log('Error syncing data: ', error);
-  //     }
-  //   };
-
-  //   syncData();  // Gọi hàm sync ngay khi component được render lần đầu
-  // }, []);  // Mảng rỗng để chỉ chạy khi component mount lần đầu
-
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Stack.Screen
+      <Stack.Screen 
         options={{
           title: 'Allocations',
-          headerRight: () => (
-            <Feather
-              name="refresh-cw"
-              size={20}
-              color='#F34F5E'
-              onPress={mySync}
-            />
-          ),
+          // headerRight: () => (
+          //   <Feather
+          //     name="refresh-cw"
+          //     size={20}
+          //     color="#f34f55e"
+          //     onPress={mySync}
+          //   />
+          // ),
         }}
       />
-
+    <View style = {{paddingBottom: 100}}>
       <AllocationsList />
+    </View>
 
       {/* Floating Action Button */}
       <Link href="/allocations/new" asChild>
@@ -69,14 +56,17 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  // dien so 
   container: {
     flex: 1,
     position: 'relative',
+    top:15
   },
+
   fab: {
     position: 'absolute',
     right: 20,
-    bottom: 20,
+    bottom: 115,
     width: 60,
     height: 60,
     backgroundColor: '#F43F5E', // Same red color for the floating button
@@ -87,6 +77,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 5, // Adds elevation to give a "floating" effect
+    elevation: 5, // Adds elevation to give a "floating" effect    
+  },
+
+  customHeader:{
+    paddingHorizontal: 1,
+    paddingTop: 20,
+    paddingBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom:5
+  },
+
+  welcomeText: {
+    fontSize: 25,
+    fontWeight: '800',
+    color: '#111827', // Dark text color for welcome message
+
   },
 });

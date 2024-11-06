@@ -1,6 +1,7 @@
 import { Redirect, Stack } from 'expo-router';
 import { useAuth } from '../../providers/AuthProvider';
 
+
 const AuthLayout = () => {
   const { isAuthenticated } = useAuth();
 

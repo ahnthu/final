@@ -1,3 +1,5 @@
+
+
 import { FlatList } from 'react-native';
 import AccountListItem from './AccountListItem';
 import { accountsCollection } from '../db';
@@ -9,7 +11,14 @@ function AccountsList({ accounts }: { accounts: Account[] }) {
   return (
     <FlatList
       data={accounts}
-      contentContainerStyle={{ gap: 5 }}
+      contentContainerStyle={{ 
+        gap: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.9, // Adjust shadow opacity
+        shadowRadius: 5,
+        elevation: 3,
+      }}
       renderItem={({ item }) => <AccountListItem account={item} />}
     />
   );

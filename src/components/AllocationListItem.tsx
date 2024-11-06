@@ -1,11 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
 import Allocation from '../model/Allocation';
 import { withObservables } from '@nozbe/watermelondb/react';
 import AccountAllocation from '../model/AccountAllocation';
 import AccountAllocationItem from './AccountAllocationItem';
-import numeral from 'numeral'
-import { accountAllocationCollection } from '../db';
 
 type AllocationListItem = {
   allocation: Allocation;
@@ -22,10 +19,10 @@ const AllocationListItem = ({
         <Text style={styles.date}>
           {allocation.createdAt.toLocaleDateString()}
         </Text>
-        <Text style={styles.income}>{numeral(allocation.income).format('0,0')},000VNĐ</Text>
+        <Text style={styles.income}>{allocation.income} VNĐ</Text>
       </View>
 
-      <View style={{ gap: 5, padding: 10 }}>
+      <View style={{ gap: 10, padding: 10, shadowOpacity: 0.9, }}>
         {accountAllocations.map((item) => (
           <AccountAllocationItem key={item.id} accountAllocation={item} />
         ))}
@@ -49,19 +46,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     backgroundColor: '#fad7da',
-    // top: 0,
+  
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#F43F5E',
     padding: 10,
   },
+
   income: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
   },
+
   date:{
     color: 'white',
     fontWeight: 'bold',

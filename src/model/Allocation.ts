@@ -7,10 +7,11 @@ import {
   children,
   nochange,
 } from '@nozbe/watermelondb/decorators';
+import { Associations } from '@nozbe/watermelondb/Model';
 
 export default class Allocation extends Model {
   static table = 'allocations';
-  static associations = {
+  static associations:Associations = {
     account_allocations: { type: 'has_many', foreignKey: 'allocation_id' },
   };
 

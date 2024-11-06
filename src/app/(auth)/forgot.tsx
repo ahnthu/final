@@ -14,8 +14,8 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [userName, setUserName] = useState(''); 
-  const [phoneNumber, setPhoneNumber] = useState(''); 
+  const [userName, setUserName] = useState(''); // State for User Name
+  const [phoneNumber, setPhoneNumber] = useState(''); // State for Phone Number
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
@@ -27,35 +27,40 @@ export default function Register() {
 
   // Helper function to check email format
   const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email regex
     return emailRegex.test(email);
   };
 
   // Function to check if user already exists
   const checkUserExists = async (email, userName, phoneNumber) => {
     try {
+      // Check if the email already exists
       const { data: emailExists } = await supabase
-        .from('profiles')
+        .from('profiles') // Assuming 'profiles' is your user table
         .select('*')
         .eq('email', email)
         .single();
 
       if (emailExists) {
-         Alert.alert("Error: ", "The email already exists");
+        Alert.alert("Error: ", "The email already exists");
         return false;
       }
 
+      // Check if the username already exists
       const { data: userNameExists } = await supabase
         .from('profiles')
         .select('*')
         .eq('userName', userName)
         .single();
 
-      if (userNameExists) {
-        Alert.alert('Error:', 'The username is already taken.');
-        return false;
-      }
+        if (userNameExists) {
+          Alert.alert('Error:', 'The username is already taken. Please choose a different one.');
+          return false;
+        } else {
+          console.log('Error: ','Username is available');
+        }        
 
+      // Check if the phone number already exists
       const { data: phoneExists } = await supabase
         .from('profiles')
         .select('*')
@@ -63,7 +68,7 @@ export default function Register() {
         .single();
 
       if (phoneExists) {
-        Alert.alert('Error:', 'Phone number is already registered.');
+        Alert.alert('Error: ','Phone number is already registered.');
         return false;
       }
 
@@ -76,36 +81,65 @@ export default function Register() {
   };
 
   async function signUpWithEmail() {
+    // Check if the phone number is provided
     if (!userName) {
-      Alert.alert('Error:', 'Please enter a User Name.');
+      Alert.alert('Error:', 'Please enter a User Name!.');
       return;
-    }
 
-    if (!isValidEmail(email)) {
-      Alert.alert('Error:', 'Please enter a valid email address.');
+    } else if (!isValidEmail(email)) {
+      Alert.alert('Error:', 'Please enter your gmail address!.');
       return;
-    }
 
-    if (!phoneNumber) {
+    } else if (!phoneNumber) {
       Alert.alert('Error:', 'Please enter a Phone Number.');
       return;
-    }
-
-    if (!/^0\d{9}$/.test(phoneNumber)) {
+    } else if (!/^0\d{9}$/.test(phoneNumber)) { // Regex for validating a 10-digit number starting with 0
       Alert.alert('Error:', 'Phone number is invalid! Must be 10 digits and start with 0.');
       return;
-    }
-
-    if (password !== confirmPassword) {
+    } else if (password !== confirmPassword) {
       Alert.alert('Error:', 'The two passwords do not match.');
       return;
     }
-
+    
+  
+    // Check if the phone number is valid
+    const phoneRegex = /^0\d{9}$/; // Regex for validating a 10-digit number starting with 0
+    if (!phoneRegex.test(phoneNumber)) {
+      Alert.alert('Error:','Phone number is unvalid!');
+      return;
+    }
+  
+    // Validate email format
+    if (!isValidEmail(email)) {
+      Alert.alert('Error:', 'Invalid email format. Please enter a valid email address.');
+      return;
+    } else {
+      // Check if the email already exists in the database
+      const emailExists = await supabase
+        .from('profiles') // Assuming 'profiles' is your user table
+        .select('*')
+        .eq('email', email)
+        .single();
+    
+      if (emailExists) {
+        Alert.alert('Error:', 'This email address is already exits.');
+        return;
+      }
+    }
+    
+  
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      Alert.alert('Error:', 'The two passwords is not the same.');
+      return;
+    }
+  
+    // Check if email, username, or phone already exist
     const isUnique = await checkUserExists(email, userName, phoneNumber);
     if (!isUnique) {
       return;
     }
-
+  
     setLoading(true);
     try {
       const { data: { session }, error } = await supabase.auth.signUp({
@@ -113,15 +147,15 @@ export default function Register() {
         password: password,
         options: {
           data: {
-            userName: userName,
-            phoneNumber: phoneNumber,
+            userName: userName, // Send userName to database
+            phoneNumber: phoneNumber, // Send phoneNumber to database
           },
         },
       });
-
+  
       if (error) {
         console.error('Error during sign up:', error);
-        Alert.alert('Error during sign up');
+        Alert.alert("Notes: ","Error during sign up");
       } else {
         console.log('Sign up successful:', session);
         if (!session) {
@@ -135,6 +169,7 @@ export default function Register() {
       setLoading(false);
     }
   }
+  
 
   return (
     <View style={styles.container}>
@@ -273,5 +308,5 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: 'bold',
   },
-});
 
+});
